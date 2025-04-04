@@ -1,0 +1,9 @@
+{
+  // Recommended Extensions for this project
+  // https://code.visualstudio.com/docs/editor/extension-marketplace#_workspace-recommended-extensions
+  "recommendations": [
+    "golang.go",
+    "ms-vscode.cpptools",
+    "ms-vscode-remote.remote-ssh"
+  ]
+}

@@ -1,0 +1,9 @@
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Compiled BPF object files
+internal/ebpf/*.o
+
+bin/
+output/

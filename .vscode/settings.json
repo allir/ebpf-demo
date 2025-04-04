@@ -1,0 +1,15 @@
+{
+    "editor.rulers": [128],
+
+    // Set default tab size for .c and .h files
+    "[c][h]": {
+      "editor.useTabStops": true,
+      "editor.tabSize": 8
+    },
+
+    // Set Go Environment
+    "go.useLanguageServer": true,
+    "go.toolsEnvVars": {
+        "GOOS": "linux",
+    },
+}
