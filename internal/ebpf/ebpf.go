@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"log"
 
@@ -29,19 +30,40 @@ type processExecEvent struct {
 }
 
 func (e *ProcessExecTracePoint) Read(ctx context.Context) error {
+	records := make(chan ringbuf.Record, 1)
+	errs := make(chan error, 1)
+
+	// Start a background reader goroutine that emits records to the records channel.
+	go func() {
+		for {
+			rec, err := e.reader.Read()
+			if err != nil {
+				errs <- err
+				return
+			}
+			records <- rec
+		}
+	}()
+
 	for {
 		select {
 		case <-ctx.Done():
 			// The context was canceled, stop reading events and return.
+			log.Println("Stopping ProcessExecTracePoint reader...")
 			return nil
-		default:
-			ev, err := e.reader.Read()
+		case err := <-errs:
+			// Received an error from the background reader.
 
-			if err != nil {
-				return fmt.Errorf("read: %w", err)
+			// If the ring buffer was closed, exit gracefully.
+			if errors.Is(err, ringbuf.ErrClosed) {
+				return nil
 			}
 
-			b_arr := bytes.NewBuffer(ev.RawSample)
+			return fmt.Errorf("read: %w", err)
+		case event := <-records:
+			// Received an event from the background reader.
+			// Parse the raw sample data into a processExecEvent struct.
+			b_arr := bytes.NewBuffer(event.RawSample)
 
 			var data processExecEvent
 			if err := binary.Read(b_arr, binary.LittleEndian, &data); err != nil {
@@ -49,6 +71,7 @@ func (e *ProcessExecTracePoint) Read(ctx context.Context) error {
 				continue
 			}
 
+			// Successfully parsed an event, log the details.
 			log.Printf("PID: %d Process: %s Filename: %s\n",
 				data.PID, data.Comm, data.Filename[:data.FilnameLen])
 		}

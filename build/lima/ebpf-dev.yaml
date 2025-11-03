@@ -5,9 +5,9 @@ arch: "default"
 vmType: "qemu"
 
 images:
-- location: "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-amd64.img"
+- location: "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img"
   arch: "x86_64"
-- location: "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-arm64.img"
+- location: "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-arm64.img"
   arch: "aarch64"
 
 cpus: 2
@@ -47,7 +47,7 @@ provision:
 - mode: system
   script: |
     #!/bin/sh
-    export GO_VERSION="1.24.1"
+    export GO_VERSION="1.25.3"
     export ARCH=`dpkg --print-architecture`
     export OS=`uname -s | tr '[:upper:]' '[:lower:]'`
     PATH="$PATH:/usr/local/go/bin"

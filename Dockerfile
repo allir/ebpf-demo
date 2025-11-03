@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-FROM ubuntu:22.04 AS builder
+FROM ubuntu:24.04 AS builder
 ARG BUILDOS BUILDARCH
 RUN apt-get update -y -q && \
     DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y -q \
@@ -10,17 +10,14 @@ RUN apt-get update -y -q && \
         llvm \
         clang \
         libbpf-dev \
-        linux-tools-common \
-        linux-tools-generic \
-        linux-tools-$(uname -r | rev | cut -d- -f2- | rev)-generic \
     && rm -rf /var/lib/apt/lists/*
-ARG GO_VERSION=1.24.1
+ARG GO_VERSION=1.25.3
 ENV PATH=$PATH:/usr/local/go/bin
 RUN curl -sL https://go.dev/dl/go${GO_VERSION}.${BUILDOS}-${BUILDARCH}.tar.gz | tar -v -C /usr/local -xz
-WORKDIR /opt/ebpf-template
+WORKDIR /opt/ebpf-demo
 COPY . . 
-RUN make
+RUN make build
 
 FROM scratch
-COPY --from=builder /opt/ebpf-template/program /opt/ebpf-template/bin/program
-CMD ["/opt/ebpf-template/bin/program"]
+COPY --from=builder /opt/ebpf-demo/bin/ebpf-demo /opt/ebpf-demo/bin/ebpf-demo
+CMD ["/opt/ebpf-demo/bin/ebpf-demo"]
