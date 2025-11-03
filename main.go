@@ -18,7 +18,6 @@ import (
 func main() {
 	// Set up signal handling to gracefully shut down on interrupt signals.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer stop()
 
 	// Allow the current process to lock memory for eBPF resources.
 	must(rlimit.RemoveMemlock(), "memlock error")
