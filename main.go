@@ -16,8 +16,8 @@ import (
 )
 
 func main() {
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT, syscall.SIGHUP)
+	// Set up signal handling to gracefully shut down on interrupt signals.
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 
 	// Allow the current process to lock memory for eBPF resources.
 	must(rlimit.RemoveMemlock(), "memlock error")
@@ -31,22 +31,21 @@ func main() {
 		}
 	}()
 
-	// Set up waitgroup and context for the reader.
+	// Set up waitgroup to wait for goroutines to finish.
 	wg := sync.WaitGroup{}
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		must(processExec.Read(ctx), "processExec read")
-	}()
+	// Start a goroutine to read events from the eBPF program.
+	wg.Go(
+		func() {
+			must(processExec.Read(ctx), "processExec read")
+		})
 
 	// Wait for a signal to stop the program.
 	// Once the signal is received, cancel the context and wait for the reader to finish.
-	<-stop
+	<-ctx.Done()
 	log.Println("Received signal, exiting program...")
-	cancel()
+	stop()
+
 	wg.Wait()
 }
 

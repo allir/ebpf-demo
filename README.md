@@ -15,7 +15,7 @@ The template is suitable for extending with additional eBPF programs and user-sp
 
 **Why use `sched_process_exec` instead of `sys_enter_execve`?**
 
-`sched_process_exec` is a tracepoint that is triggered after a process successfully executes a new program (i.e., after `execve` completes). This provides a reliable and architecture-independent way to observe process execution events, including the process's new PID and command-line arguments. In contrast, `sys_enter_execve` is triggered before the syscall is executed, may not reflect the final state, and can be less portable across kernel versions and architectures. Using `sched_process_exec` ensures more accurate and consistent tracing of process execution events.
+`sched_process_exec` is a tracepoint that is triggered after a process successfully executes a new program (i.e., after `execve` completes). This provides a reliable and architecture-independent way to observe process execution events, including the process's new PID and command-line arguments. In contrast, `sys_enter_execve` is triggered before the syscall is executed, therefore may not reflect the final state, and can be less portable across kernel versions and architectures. Using `sched_process_exec` ensures more accurate and consistent tracing of process execution events.
 
 ## Requirements
 
@@ -68,10 +68,10 @@ limactl shell ebpf-dev
     export KERNEL_VERSION=`uname -r`
     apt-get update -q
     apt-get install -q -y \
-    apt-transport-https ca-certificates curl \
-    linux-tools-common linux-tools-generic linux-tools-${KERNEL_VERSION} \
-    build-essential llvm clang \
-    libbpf-dev libelf-dev libpcap-dev
+      apt-transport-https ca-certificates curl \
+      linux-tools-common linux-tools-generic linux-tools-${KERNEL_VERSION} \
+      build-essential llvm clang \
+      libbpf-dev libelf-dev libpcap-dev
     ```
 
 - Install BPFTool

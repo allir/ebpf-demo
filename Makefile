@@ -36,14 +36,14 @@ GO ?= $(shell which go || false)
 BPFTOOL ?= $(shell which bpftool || false)
 DOCKER ?= $(shell which docker || false)
 LIMA ?= $(shell which limactl || false)
-GOLANGCI_LINT ?= $(GO) tool golangci-lint
+GOLANGCI_LINT ?= $(GO) tool -modfile tools/tools.mod golangci-lint
 
 # BPF
 BPF_CFLAGS ?= "-g -O3 -fpie -Wall -Wextra -Wconversion"
 bpf_src := $(shell find bpf -name "*.bpf.c")
 
 # LIBBPF Headers
-LIBBPF_VERSION = 1.4.7
+LIBBPF_VERSION = 1.6.2
 libbpf_dir = bpf/libbpf
 libbpf_headers := $(libbpf_dir)/LICENSE.BSD-2-Clause
 libbpf_headers := $(libbpf_headers) $(libbpf_dir)/bpf_core_read.h $(libbpf_dir)/bpf_endian.h
@@ -195,7 +195,7 @@ ifeq (, $(LIMA))
 endif
 
 VM_NAME ?= ebpf-dev
-lima_config := .lima/ebpf-dev.yaml
+lima_config := build/lima/ebpf-dev.yaml
 lima_env := LIMA_INSTANCE=$(VM_NAME)
 
 .PHONY: lima-start lima-stop lima-shell lima-generate lima-build lima-remove

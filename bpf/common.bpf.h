@@ -2,8 +2,8 @@
 #define __BPF_COMMON_BPF_H
 
 // Define the maximum length of the task comm and filename
-// This is the same as the kernel's TASK_COMM_LEN
-// and the maximum filename length in the kernel
+// This is the same as the kernel's TASK_COMM_LEN definition
+// and maximum filename length used in various kernel structures.
 #define TASK_COMM_LEN 16
 #define MAX_FILENAME_LEN 512
 

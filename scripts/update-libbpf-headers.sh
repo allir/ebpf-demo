@@ -8,7 +8,7 @@ SCRIPT=$( cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd )/$( basename "
 SCRIPTPATH=$( dirname "${SCRIPT}" )
 
 # LibBPF headers version to download
-LIBBPF_VERSION=${LIBBPF_VERSION:-1.3.0}
+LIBBPF_VERSION=${LIBBPF_VERSION:-1.6.2}
 
 # The headers we want
 prefix=libbpf-"$LIBBPF_VERSION"
